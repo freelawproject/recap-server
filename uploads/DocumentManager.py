@@ -70,7 +70,7 @@ def update_local_db(docket, ignore_available=1):
 
 def mark_as_available(filename):
     docmeta = IACommon.get_meta_from_filename(filename)
-    internal_casenum = ParsePacer.coerce_casenum_if_necessary(docmeta["court"], docmenta["casenum"])
+    internal_casenum = ParsePacer.coerce_casenum_if_necessary(docmeta["court"], docmeta["casenum"])
 
     docquery =  Document.objects.filter(court=docmeta["court"],
                                         casenum=internal_casenum,
