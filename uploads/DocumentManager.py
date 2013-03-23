@@ -12,9 +12,8 @@ def update_local_db(docket, ignore_available=1):
 
     court = docket.casemeta["court"]
     casenum = docket.casemeta["pacer_case_num"]
-    if '-' in casenum:
-        casenum = ParsePacer.coerce_casenum(casenum)
-
+    internal_casenum = ParsePacer.coerce_casenum_if_necessary(court, casenum)
+    
     for docmeta in docket.documents.values():
 
         docnum = docmeta["doc_num"]
@@ -22,7 +21,7 @@ def update_local_db(docket, ignore_available=1):
         subdocnum = docmeta["attachment_num"]
 
         docquery = Document.objects.filter(court=court,
-                                           casenum=casenum,
+                                           casenum=internal_casenum,
                                            docnum=docnum,
                                            subdocnum=subdocnum)
 
@@ -30,7 +29,7 @@ def update_local_db(docket, ignore_available=1):
             docentry = docquery[0]
         except IndexError:
             # Add this new document to our DB
-            docentry = Document(court=court, casenum=casenum,
+            docentry = Document(court=court, casenum=internal_casenum,
                                 docnum=docnum, subdocnum=subdocnum)
         try:
             docentry.docid = docmeta["pacer_doc_id"]
@@ -67,13 +66,14 @@ def update_local_db(docket, ignore_available=1):
             docentry.save()
         except IntegrityError:
             logging.error("update_local_db: could not save %s %s %s %s"
-                          % (court, casenum, docnum, subdocnum))
+                          % (court, internal_casenum, docnum, subdocnum))
 
 def mark_as_available(filename):
     docmeta = IACommon.get_meta_from_filename(filename)
+    internal_casenum = ParsePacer.coerce_casenum_if_necessary(docmeta["court"], docmenta["casenum"])
 
     docquery =  Document.objects.filter(court=docmeta["court"],
-                                        casenum=docmeta["casenum"],
+                                        casenum=internal_casenum,
                                         docnum=docmeta["docnum"],
                                         subdocnum=docmeta["subdocnum"])
 
@@ -94,14 +94,15 @@ def handle_adddocmeta(docid, court, casenum, de_seq_num, dm_id,
                       docnum, subdocnum):
 
     docid = ParsePacer.coerce_docid(docid)
+    internal_casenum = ParsePacer.coerce_casenum_if_necessary(court, casenum)
 
-    query = Document.objects.filter(court=court, casenum=casenum,
+    query = Document.objects.filter(court=court, casenum=internal_casenum,
                                     docnum=docnum, subdocnum=subdocnum)
 
     try:
         doc = query[0]
     except IndexError:
-        doc = Document(docid=docid, court=court, casenum=casenum,
+        doc = Document(docid=docid, court=court, casenum=internal_casenum,
                        de_seq_num=de_seq_num, dm_id=dm_id, docnum=docnum,
                        subdocnum=subdocnum)
     else:
@@ -120,7 +121,8 @@ def handle_adddocmeta(docid, court, casenum, de_seq_num, dm_id,
 def create_docket_from_local_documents(court, casenum, removedocket=None):
 
     docket = DocketXML(court, casenum)
-    localdocs = Document.objects.filter(court=court, casenum=casenum)
+    internal_casenum = ParsePacer.coerce_casenum_if_necessary(court, casenum)
+    localdocs = Document.objects.filter(court=court, casenum=internal_casenum)
 
     try:
         currdoc = localdocs[0]

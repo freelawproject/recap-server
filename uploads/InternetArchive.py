@@ -22,6 +22,7 @@ from uploads.models import Document, PickledPut, BucketLock, Uploader
 import DocketXML
 import UploadHandler
 import BucketLockManager
+import ParsePacer
 import InternetArchiveDirect as IADirect
 import InternetArchiveCommon as IACommon
 import DocumentManager
@@ -265,8 +266,10 @@ def _update_docs_availability(docket):
     court = docket.casemeta["court"]
     casenum = docket.casemeta["pacer_case_num"]
 
+    internal_casenum = ParsePacer.coerce_casenum_if_necessary(court, casenum)
+
     # Find all the docs that we know about but are not available
-    query = Document.objects.filter(court=court, casenum=casenum,
+    query = Document.objects.filter(court=court, casenum=internal_casenum,
                                     sha1__isnull=False)
     for doc in query:
         docnum = doc.docnum
