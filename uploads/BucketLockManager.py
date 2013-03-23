@@ -6,12 +6,16 @@ from MySQLdb import IntegrityError
 from uploads.models import BucketLock
 
 import DocketXML
+import ParsePacer
 
 def get_lock(court, casenum, uploaderid, one_per_uploader=0):
 
     nonce = DocketXML.generate_new_nonce()
+    # Hack this in places for now, abstract it later
 
-    lock = BucketLock(court=court, casenum=casenum,
+    internal_casenum = ParsePacer.coerce_casenum_if_necessary(court, casenum)
+
+    lock = BucketLock(court=court, casenum=internal_casenum,
                       uploaderid=uploaderid, nonce=nonce)
     try:
         lock.save()
@@ -19,7 +23,7 @@ def get_lock(court, casenum, uploaderid, one_per_uploader=0):
         # Fail, lock already exists.
 
         lockquery = BucketLock.objects.filter(court=court) \
-                                      .filter(casenum=casenum)
+                                      .filter(casenum=internal_casenum)
         try:
             lock = lockquery[0]
         except IndexError:
@@ -47,9 +51,10 @@ def get_lock(court, casenum, uploaderid, one_per_uploader=0):
 
 def drop_lock(court, casenum, uploaderid, modified=1,
               nolocaldb=0, ignore_nonce=0):
-
+    
+    internal_casenum = ParsePacer.coerce_casenum_if_necessary(court, casenum)
     lockquery = BucketLock.objects.filter(court=court) \
-                                  .filter(casenum=casenum)
+                                  .filter(casenum=internal_casenum)
 
     # Try to drop the lock
     try:
@@ -78,8 +83,9 @@ def drop_lock(court, casenum, uploaderid, modified=1,
             return True, ""
 
 def lock_exists(court, casenum):
+    internal_casenum = ParsePacer.coerce_casenum_if_necessary(court, casenum)
     lockquery = BucketLock.objects.filter(court=court) \
-                                  .filter(casenum=casenum)
+                                  .filter(casenum=internal_casenum)
     try:
         lock = lockquery[0]
     except IndexError:

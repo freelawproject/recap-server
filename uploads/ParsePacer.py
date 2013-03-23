@@ -38,6 +38,11 @@ def uncoerce_casenum(casenum):
 def is_appellate(court):
     return court in ["ca1", "ca2", "ca3", "ca4", "ca5", "ca6", "ca7", "ca8", "ca9", "ca10", "ca11", "cadc", "cafc"]
 
+def coerce_casenum_if_necessary(court, casenum)
+    if is_appellate(court)
+        return coerce_casenum(casenum)
+    return casenum
+
 doc_re = re.compile(r'/doc1/(\d+)$')
 ca_doc_re = re.compile(r'(TransportRoom.*ShowDoc.*?dls_id.*?(\d+)|/docs1/(\d+)$)')
 
