@@ -4,3 +4,4 @@ debug.log
 settings.py
 uploads/recap_config.py
 ia_upload_script.sh
+.vagrant
