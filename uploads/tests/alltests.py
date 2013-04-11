@@ -552,7 +552,7 @@ class TestViews(unittest.TestCase):
         d2 = Document(court='dcd', casenum='100', docnum='1', subdocnum='0')
         d2.save()
         yesterday = time.time() - 60 * 60 * 24
-        response = self.client.post('/recap/get_updated_cases/', {'key' : "REMOVED", 
+        response = self.client.post('/recap/get_updated_cases/', {'key' : config['API_KEYS'][0], 
                                                                  'tpq' : yesterday})
         self.assertEquals(200, response.status_code)
         self.assertEquals('%s,%s\r\n%s,%s\r\n' % (d1.court, d1.casenum, d2.court, d2.casenum), response.content)
@@ -569,7 +569,7 @@ class TestViews(unittest.TestCase):
         self.assertEquals(403, response.status_code)
     
     def test_heartbeat_correct_key_no_db_connection(self):
-        response = self.client.get('/recap/heartbeat/', {'key' : "REMOVED"})
+        response = self.client.get('/recap/heartbeat/', {'key' : config['API_KEYS'][0]})
         self.assertEquals(500, response.status_code)
         self.assertEquals("500 Server error: He's Dead Jim", response.content)
         
@@ -578,7 +578,7 @@ class TestViews(unittest.TestCase):
         document = Document(court='cand', casenum='215270', docnum='1', subdocnum='0')
         document.save()
 
-        response = self.client.get('/recap/heartbeat/', {'key' : "REMOVED"})
+        response = self.client.get('/recap/heartbeat/', {'key' : config['API_KEYS'][0]})
         self.assertEquals(200, response.status_code)
         self.assertEquals("It's Alive!", response.content)
 
@@ -633,7 +633,7 @@ class TestUploadView(unittest.TestCase):
     def test_upload_docket_invalid_casenum_param(self):
         self.valid_params['casenum'] = 'garbage_data'
         response = self.client.post('/recap/upload/', self.valid_params)
-        self.assertEquals("upload: 'casenum' is not an integer: garbage_data", response.content)
+        self.assertEquals("upload: 'casenum' invalid: garbage_data", response.content)
     
     def test_upload_docket_no_casenum_param(self):
         del self.valid_params['casenum']

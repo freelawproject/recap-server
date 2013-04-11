@@ -39,6 +39,8 @@ def is_doc1_html(filename, mimetype, url, casenum):
 
 def docid_from_url_name(url):
     """ Extract the docid from a PACER URL name. """
+    if (url == None):
+        raise ValueError('docid_from_url_name')
     if doc_re.search(url):
         return ParsePacer.coerce_docid(doc_re.search(url).group(1))
     if ca_doc_re.search(url):
