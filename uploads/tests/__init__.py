@@ -3,14 +3,17 @@
 # out from this file while actively developing. Alternatively, refactor those tests
 # so they don't take so long.
 
-# TODO: Break up alltests into separate modules
-#from alltests import TestParsePacer, TestViews, TestUploadView, TestQueryCasesView, \
-#                     TestThirdPartyViews, TestQueryView, TestAddDocMetaView, TestParseOpinions
+from test_parse_pacer import TestParsePacer
+from test_views import TestViews
+from test_upload_view import TestUploadView
+from test_query_cases_view import TestQueryCasesView
+from test_third_party_views import TestThirdPartyViews
+from test_query_view import TestQueryView
+from test_add_doc_meta_view import TestAddDocMetaView
+from test_parse_opinions import TestParseOpinions
 
-#from alltests import TestThirdPartyViews
-
-from test_pacer_client import TestPacerClient
-from test_opinions_downloader import TestOpinionsDownloader
-from test_ia_uploader import TestIAUploader
+#from test_pacer_client import TestPacerClient
+#from test_opinions_downloader import TestOpinionsDownloader
+#from test_ia_uploader import TestIAUploader
 from test_docket_xml import TestDocketXml
 from test_document_manager import TestDocumentManager
