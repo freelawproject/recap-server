@@ -388,6 +388,32 @@ class TestParsePacer(unittest.TestCase):
     self.assertEquals(parties[0]["name"], "LA Printex Industries Inc")
 
 
+  # Some dockets use multiple separate tables for parties, not just one table
+  def test_get_parties_info_from_dkrpt_multiple_tables(self): 
+    the_soup = _open_soup(TEST_DOCKET_PATH + "mad.137971.html")
+    parties = PP._get_parties_info_from_dkrpt(the_soup, "mad")
+    self.assertEquals(len(parties), 4)
+    
+    self.assertEquals(parties[0]["name"], "Aaron Swartz")
+    self.assertEquals(parties[0]["extra_info"], "TERMINATED: 01/14/2013")
+    self.assertEquals(len(parties[0]["attorneys"]), 6)
+
+    self.assertEquals(parties[1]["name"], "Massachusetts Institute of Technology")
+    self.assertEquals(len(parties[1]["attorneys"]), 2)
+    self.assertEquals(parties[1]["type"], "Interested Party")
+
+    self.assertEquals(parties[2]["name"], "JSTOR")
+    self.assertEquals(len(parties[2]["attorneys"]), 1)
+    self.assertEquals(parties[2]["type"], "Interested Party")
+    
+    self.assertEquals(parties[3]["name"], "USA")
+    self.assertEquals(len(parties[3]["attorneys"]), 3)
+    self.assertEquals(parties[3]["type"], "Plaintiff")
+    self.assertEquals(parties[3]["attorneys"][0]["attorney_name"], "Jack W. Pirozzolo")
+    self.assertEquals(parties[3]["attorneys"][1]["attorney_name"], "Scott Garland")
+    self.assertEquals(parties[3]["attorneys"][2]["attorney_name"], "Stephen P. Heymann")
+
+
 def _open_soup(filename):
     f = open(filename)
     filebits = f.read()
