@@ -1,0 +1,3 @@
+http://www.djangoproject.com/download/0.96.5/tarball/
+lxml==3.1beta1
+MySQL_python==1.2.4
