@@ -18,4 +18,5 @@ config = {"DATABASE_NAME": "recap_dev",
           "API_KEYS": ["REMOVED",],
           "PACER_USERNAME": "REMOVED",
           "PACER_PASSWORD": "REMOVED"
+          "HEARTBEAT_KEY": "heartbeat_key_REMOVED"
 }
