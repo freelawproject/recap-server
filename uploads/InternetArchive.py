@@ -32,6 +32,9 @@ from recap_config import config
 MAX_CONCURRENT_PROCESSES = 1 
 
 BASE_PICKLE_JAR = ROOT_PATH + "/picklejar"
+if (not os.path.exists(BASE_PICKLE_JAR)):
+    os.mkdir(BASE_PICKLE_JAR)
+
 LOCK_TIMEOUT = 86400 #seconds
 AUTH_KEY = config["UPLOAD_AUTHKEY"]
 

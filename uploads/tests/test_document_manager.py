@@ -20,9 +20,9 @@ class TestDocumentManager(unittest.TestCase):
 
         self.assertEquals(1, Document.objects.count())
         self.assertEquals('nysd', created_doc.court)
-        self.assertEquals(1234, created_doc.casenum)
-        self.assertEquals(1, created_doc.docnum)
-        self.assertEquals(2, created_doc.subdocnum)
+        self.assertEquals('1234', created_doc.casenum)
+        self.assertEquals('1', created_doc.docnum)
+        self.assertEquals('2', created_doc.subdocnum)
     
     def test_update_local_db_updates_existing(self):
         d1 = Document(court='nysd', casenum='1234', docnum='1', subdocnum='2')
@@ -65,8 +65,8 @@ class TestDocumentManager(unittest.TestCase):
         DocumentManager.update_local_db(self.doc_xml)
         self.assertEquals(1, Document.objects.count())
         created_doc = Document.objects.all()[0]
-        self.assertEquals(int(i_dict['doc_num']), created_doc.docnum)
-        self.assertEquals(int(i_dict['attachment_num']), created_doc.subdocnum)
+        self.assertEquals(int(i_dict['doc_num']), int(created_doc.docnum))
+        self.assertEquals(int(i_dict['attachment_num']), int(created_doc.subdocnum))
         self.assertEquals(i_dict['pacer_doc_id'], created_doc.docid)
         self.assertEquals(int(i_dict['pacer_de_seq_num']), created_doc.de_seq_num)
         self.assertEquals(int(i_dict['pacer_dm_id']), created_doc.dm_id)

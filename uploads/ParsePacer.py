@@ -1213,30 +1213,32 @@ def _get_parties_info_from_dkrpt(the_soup, court):
     dash_separator = re.compile(r"^-----*$")
     represented_by = re.compile(r"^represented\sby\s*", re.UNICODE)
 
-    # We use this search to find at least one valid entry from the parties table
-    party_set= the_soup.findAll(text = re.compile(r"Defendant|Plaintiff|Petitioner|Respondent|Debtor|Trustee|Mediator|Creditor Committee|Intervenor|Claimant"))
+    # We use this search to find the parties table(s)
+    party_set= the_soup.findAll(text = re.compile(r"Defendant|Plaintiff|Petitioner|Respondent|Debtor|Trustee|Mediator|Creditor Committee|Intervenor|Claimant|Interested Party"))
 
-    parties_rows = []
+    parties_tables = []
+    is_adversary = False
     for entry in party_set:
        if is_bankruptcy:
            valid_party = (entry.parent.name == u"b" and entry.parent.parent.name == u"i")
-           is_adversary = False
-
            if not valid_party:
                # Adversary Proceedings have different party format
-               valid_party = (entry.parent.name == u"b" and dash_separator.match(entry.next.next))
-               is_adversary = valid_party
+               valid_party = ((entry.parent.name == u"b") and dash_separator.match(str(entry.next.next)))
+               if (valid_party):
+                   is_adversary = True
+
        else:
            valid_party = (entry.parent.name == u"u" and entry.parent.parent.name == u"b")
-           is_adversary = False
 
        if valid_party:
-           parties_rows = entry.findParent('table').findAll('tr')
-           break
+           table = entry.findParent('table')
+           if (table not in parties_tables):
+               parties_tables.append(table)
 
 
-    if parties_rows:
-
+    for table in parties_tables:
+        parties_rows = table.findAll('tr')
+      
         for row in parties_rows:
             party_cols = row.findAll('td')
 

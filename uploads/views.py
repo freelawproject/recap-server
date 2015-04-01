@@ -18,7 +18,6 @@ import os
 
 from recap_config import config
 
-
 def index(request):
     return HttpResponse("Well hello, there's nothing to see here.")
 
@@ -452,8 +451,8 @@ def get_updated_cases(request):
     """
     This view is used by archive.recapthelaw.org to determine what dockets to download from IA
     """
-    API_KEYS = (u'',)
-
+    API_KEYS = config['API_KEYS']
+    
     params = request.POST
     tpq = params.get('tpq', '')
     api_key = params.get('key', '')
@@ -484,7 +483,7 @@ def heartbeat(request):
         # Fail.  Missing required arguments.
         return HttpResponseForbidden("403 Forbidden")
 
-    if key != config["HEARTBEAT_KEY"]:
+    if key not in config['API_KEYS']:
         return HttpResponseForbidden("403 Forbidden")
 
     query = Document.objects.filter(court='cand', casenum='215270')
