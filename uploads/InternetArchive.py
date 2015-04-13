@@ -310,11 +310,11 @@ def _dispatch_put(request, ppentry):
         # If none of the whitelisted errors above happens, quarantine the pickle
 
         # Delete the entry from the DB
-        #ppentry.delete()
+        # ppentry.delete()
         # Quarantine the pickle file for analysis
-        #_quarantine_pickle(filename)
+        # _quarantine_pickle(filename)
 
-        #return False, "IA URL error %s (pickle quarantined)." % str(e.reason)
+        # return False, "IA URL error %s (pickle quarantined)." % str(e.reason)
 
     except socket.timeout:
 
@@ -351,7 +351,7 @@ def _dispatch_put(request, ppentry):
 
 
 def _cron_get_updates():
-    ''' Async fetch and update after a lock has been unlocked. '''
+    """ Async fetch and update after a lock has been unlocked. """
 
     # Calculate the TIMEOUT cutoff
     now = datetime.datetime.now()
@@ -365,7 +365,7 @@ def _cron_get_updates():
     # Then, go through the ready locks one-by-one with HTTP waiting.
     for lock in readylocks:
         _cron_fetch_update(lock)
-        #for expiredlock in expiredlocks:
+        # for expiredlock in expiredlocks:
         #    court = unicode(expiredlock.court)
         #    casenum = unicode(expiredlock.casenum)
         #    print "  %s.%s lock expired." % (court, casenum)
@@ -422,8 +422,9 @@ def _cron_fetch_update(lock):
         ia_docket_after_local_merge_hash = hash(pickle.dumps(ia_docket))
 
         if ia_docket_orig_hash != ia_docket_after_local_merge_hash:
-            print " After fetch, some locally stored information was missing from %s.%s. Local info addition scheduled." % (
-                court, casenum)
+            print " After fetch, some locally stored information was " \
+                  "missing from %s.%s. Local info addition scheduled." % (
+                      court, casenum)
             UploadHandler.do_me_up(ia_docket)
 
         # Remove the lock.
@@ -593,7 +594,7 @@ def _cron_process_PDF(obj, ppentry):
 
 
 def _cron_process_docketXML(docket, ppentry):
-    ''' Required to have the lock. '''
+    """ Required to have the lock. """
 
     court = docket.casemeta["court"]
     casenum = docket.casemeta["pacer_case_num"]
@@ -655,7 +656,7 @@ def _cron_process_docketXML(docket, ppentry):
 
 
 def _cron_me_up(ia_docket, docket, ppentry):
-    ''' Merge and update docket'''
+    """ Merge and update docket"""
 
     ia_court = ia_docket.casemeta["court"]
     ia_casenum = ia_docket.casemeta["pacer_case_num"]

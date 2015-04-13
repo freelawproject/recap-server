@@ -12,7 +12,7 @@ FETCH_URLERROR = -3
 FETCH_TIMEOUT = -4
 FETCH_UNKNOWN = -5
 
-NO_BUCKET_HTML_MESSAGE="The item you have requested has a problem with one or more of the\n\
+NO_BUCKET_HTML_MESSAGE = "The item you have requested has a problem with one or more of the\n\
 metadata files that describe it, which prevents us from displaying this\n\
 page"
 
