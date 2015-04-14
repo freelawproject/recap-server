@@ -27,6 +27,9 @@ def update_local_db(docket, ignore_available=1, team_name=None):
             # New item: Add it to our DB
             docentry = Document(court=court, casenum=casenum,
                                 docnum=docnum, subdocnum=subdocnum)
+            if team_name is not None:
+                # Only add the team_name to new items
+                docentry.team_name = team_name
         except OperationalError:
             logging.error("update_local_db: could not save %s %s %s %s"
                           % (court, casenum, docnum, subdocnum))
@@ -62,9 +65,6 @@ def update_local_db(docket, ignore_available=1, team_name=None):
             docentry.free_import = docmeta["free_import"]
         except KeyError:
             pass
-
-        if team_name is not None:
-            docentry.team_name = team_name
 
         try:
             docentry.save()
