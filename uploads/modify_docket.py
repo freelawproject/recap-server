@@ -1,4 +1,5 @@
-import sys, os
+import os
+import sys
 sys.path.extend(('../..','..', '.'))
 os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
 
@@ -8,6 +9,7 @@ import InternetArchiveCommon as IACommon
 import DocketXML
 import remove_docket, remove_document, urllib2
 from optparse import OptionParser
+
 
 def delete_documents_from_docket(court, casenum, documents):
     # Step 1: Get docket and convert into DocketXML

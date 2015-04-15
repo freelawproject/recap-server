@@ -665,7 +665,8 @@ def _cron_me_up(ia_docket, docket, ppentry):
     ia_docket_orig_hash = hash(pickle.dumps(ia_docket))
     ia_casemeta_orig_hash = hash(pickle.dumps(ia_docket.casemeta))
 
-    # Merge ia_docket with our local database information to fill in blank fields that may exist in ia
+    # Merge ia_docket with our local database information to fill in blank
+    # fields that may exist in ia
     local_docket = DocumentManager.create_docket_from_local_documents(ia_court,
                                                                       ia_casenum,
                                                                       docket)
