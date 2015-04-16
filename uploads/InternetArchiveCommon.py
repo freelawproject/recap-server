@@ -151,7 +151,7 @@ def make_pdf_delete_request(court, casenum, docnum, subdocnum):
     bucketname = get_bucketname(court, casenum)
     filename = get_pdfname(court, casenum, docnum, subdocnum)
 
-    storage_path = "%s/%s" % (bucketname, filename)
+    storage_path = ("%s/%s" % (bucketname, filename)).encode('utf-8')
     request = _init_delete(storage_path)
     request.add_header('x-archive-cascade-delete', '1')
 
@@ -162,7 +162,7 @@ def make_docketxml_delete_request(court, casenum):
     bucketname = get_bucketname(court, casenum)
     filename = get_docketxml_name(court, casenum)
 
-    storage_path = "%s/%s" % (bucketname, filename)
+    storage_path = ("%s/%s" % (bucketname, filename)).encode('utf-8')
     request = _init_delete(storage_path)
     request.add_header('x-archive-cascade-delete', '1')
 
@@ -173,7 +173,7 @@ def make_dockethtml_delete_request(court, casenum):
     bucketname = get_bucketname(court, casenum)
     filename = get_dockethtml_name(court, casenum)
 
-    storage_path = "%s/%s" % (bucketname, filename)
+    storage_path = ("%s/%s" % (bucketname, filename)).encode('utf-8')
     request = _init_delete(storage_path)
     request.add_header('x-archive-cascade-delete', '1')
 
@@ -186,7 +186,7 @@ def make_docketxml_request(docketbits, court, casenum, metadict={}, makenew=0):
     bucketname = get_bucketname(court, casenum)
     filename = get_docketxml_name(court, casenum)
 
-    storage_path = "%s/%s" % (bucketname, filename)
+    storage_path = ("%s/%s" % (bucketname, filename)).encode('utf-8')
     request = _init_put(storage_path)
 
     if makenew:
@@ -212,7 +212,7 @@ def make_dockethtml_request(docketbits, court, casenum, metadict={}):
     bucketname = get_bucketname(court, casenum)
     filename = get_dockethtml_name(court, casenum)
 
-    storage_path = "%s/%s" % (bucketname, filename)
+    storage_path = ("%s/%s" % (bucketname, filename)).encode('utf-8')
     request = _init_put(storage_path)
 
     for k, v in metadict.items():
