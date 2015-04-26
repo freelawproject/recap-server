@@ -29,11 +29,7 @@ def get_lock(court, casenum, uploaderid, one_per_uploader=0):
 
             # This prevents two cron jobs from requesting the same lock
             if lock.uploaderid == uploaderid and one_per_uploader:
-                if lock.nonce == 'bigdoc':
-                    # Only report the error if it's not a bigdoc.
-                    return lock.nonce, ''
-                else:
-                    return None, "You already own this lock (Another cron job?)"
+                return None, "You already own this lock (Another cron job?)"
             if lock.uploaderid == uploaderid and not lock.ready:
                 return lock.nonce, ""
             if lock.uploaderid == uploaderid and lock.ready and not lock.processing:
