@@ -1,4 +1,3 @@
-
 import logging
 
 from MySQLdb import IntegrityError
@@ -7,8 +6,8 @@ from uploads.models import BucketLock
 
 import DocketXML
 
-def get_lock(court, casenum, uploaderid, one_per_uploader=0):
 
+def get_lock(court, casenum, uploaderid, one_per_uploader=0):
     nonce = DocketXML.generate_new_nonce()
 
     lock = BucketLock(court=court, casenum=casenum,
@@ -19,7 +18,7 @@ def get_lock(court, casenum, uploaderid, one_per_uploader=0):
         # Fail, lock already exists.
 
         lockquery = BucketLock.objects.filter(court=court) \
-                                      .filter(casenum=casenum)
+            .filter(casenum=casenum)
         try:
             lock = lockquery[0]
         except IndexError:
@@ -30,7 +29,11 @@ def get_lock(court, casenum, uploaderid, one_per_uploader=0):
 
             # This prevents two cron jobs from requesting the same lock
             if lock.uploaderid == uploaderid and one_per_uploader:
-                return None, "You already own this lock (Another cron job?)"
+                if lock.nonce == 'bigdoc':
+                    # Only report the error if it's not a bigdoc.
+                    return lock.nonce, ''
+                else:
+                    return None, "You already own this lock (Another cron job?)"
             if lock.uploaderid == uploaderid and not lock.ready:
                 return lock.nonce, ""
             if lock.uploaderid == uploaderid and lock.ready and not lock.processing:
@@ -45,11 +48,11 @@ def get_lock(court, casenum, uploaderid, one_per_uploader=0):
         # Success.
         return nonce, ""
 
+
 def drop_lock(court, casenum, uploaderid, modified=1,
               nolocaldb=0, ignore_nonce=0):
-
     lockquery = BucketLock.objects.filter(court=court) \
-                                  .filter(casenum=casenum)
+        .filter(casenum=casenum)
 
     # Try to drop the lock
     try:
@@ -77,9 +80,10 @@ def drop_lock(court, casenum, uploaderid, modified=1,
             lock.save()
             return True, ""
 
+
 def lock_exists(court, casenum):
     lockquery = BucketLock.objects.filter(court=court) \
-                                  .filter(casenum=casenum)
+        .filter(casenum=casenum)
     try:
         lock = lockquery[0]
     except IndexError:
@@ -88,12 +92,12 @@ def lock_exists(court, casenum):
     else:
         return True
 
-def query_locks(uploaderid):
 
+def query_locks(uploaderid):
     # Find all the locks for the user
 
-    lockquery = BucketLock.objects.filter(uploaderid=uploaderid)\
-                                  .filter(ready=0)
+    lockquery = BucketLock.objects.filter(uploaderid=uploaderid) \
+        .filter(ready=0)
 
     triples = []
     for lock in lockquery:
@@ -101,8 +105,8 @@ def query_locks(uploaderid):
 
     return triples
 
-def mark_ready_for_processing(timeout_cutoff):
 
+def mark_ready_for_processing(timeout_cutoff):
     # Get all ready locks that aren't expired.
     lockquery = BucketLock.objects.filter(ready=1, processing=0,
                                           locktime__gte=timeout_cutoff)
@@ -121,8 +125,8 @@ def mark_ready_for_processing(timeout_cutoff):
 
     return locklist
 
-def mark_expired_for_processing(timeout_cutoff):
 
+def mark_expired_for_processing(timeout_cutoff):
     # Get all expired entries regardless of readiness.
     expiredquery = BucketLock.objects.filter(processing=0,
                                              locktime__lt=timeout_cutoff)
@@ -145,7 +149,6 @@ def mark_expired_for_processing(timeout_cutoff):
 
 
 def try_lock_later(lock):
-
     lock.processing = 0
 
     try:

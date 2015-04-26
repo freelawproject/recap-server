@@ -457,6 +457,9 @@ def do_parse_xml(root):
 
 
 def generate_new_nonce():
+    """
+    MJL: Why do we need a unique value for the nonce??
+    """
     return "".join([random.choice(string.letters + string.digits)
                     for _ in xrange(6)])
 
