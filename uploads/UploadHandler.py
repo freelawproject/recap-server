@@ -39,12 +39,19 @@ def is_doc1_path(path):
 
 def is_doc1_html(filename, mimetype, url, casenum):
     """ Returns true if the metadata indicates a doc1 HTML file. """
-    return is_doc1_path(filename) and is_html(mimetype) \
-        and url is None and casenum is None
+    return all([
+        is_doc1_path(filename),
+        is_html(mimetype),
+        url is None,
+        casenum is None,
+    ])
 
 
 def docid_from_url_name(url):
-    """ Extract the docid from a PACER URL name."""
+    """ Extract the docid from a PACER URL name.
+
+    CA sometimes have: /cmecf/servlet/TransportRoom?servlet=ShowDoc&dls_id=00404800657&caseId=124912&dktType=dktPublic
+    """
     if doc_re.search(url):
         return ParsePacer.coerce_docid(doc_re.search(url).group(1))
     if ca_doc_re.search(url):
@@ -52,16 +59,16 @@ def docid_from_url_name(url):
     raise ValueError('docid_from_url_name')
 
 
-def handle_upload(filedata, court, casenum, mimetype, url, team_name):
+def handle_upload(data, court, casenum, mimetype, url, team_name):
     """ Main handler for uploaded data. """
 
     logging.debug('handle_upload %s %s %s %s', court, casenum, mimetype, url)
 
     try:
-        filename = filedata['filename']
-        filebits = filedata['content']
+        filename = data['filename']
+        filebits = data['content']
     except KeyError:
-        message = "No filedata 'filename' or 'content' attribute."
+        message = "No data 'filename' or 'content' attribute."
         logging.error("handle_upload: %s" % message)
         return "upload: %s" % message
 
@@ -152,7 +159,6 @@ def handle_docket(filebits, court, casenum, filename, team_name):
 
     logging.debug('handle_docket: %s %s %s', court, casenum, filename)
 
-    # TK: Remove ^.* from regex when upgrading test client
     histdocqry_re = re.compile(r"HistDocQry_?\d*\.html$")
     dktrpt_re = re.compile(r".*DktRpt_?\d*\.html$")
 
@@ -388,8 +394,7 @@ def do_me_up(docket):
 
 def _get_cases_dict(casenum, docket):
     """ Create a dict containing the info for the case specified """
-    cases = {}
-    cases[casenum] = {}
+    cases = {casenum: {}}
     try:
         docketnum = docket.casemeta["docket_num"]
     except (KeyError, AttributeError):

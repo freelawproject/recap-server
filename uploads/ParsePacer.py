@@ -35,6 +35,11 @@ def is_appellate(court):
 
 
 doc_re = re.compile(r'/doc1/(\d+)')
+
+# Possible strings include:
+#  - /cmecf/servlet/TransportRoom?servlet=ShowDoc&dls_id=00404800657&caseId=124912&dktType=dktPublic
+#  - /doc1/3827390
+#  - A third kind, I think.
 ca_doc_re = re.compile(r'(?:TransportRoom.*ShowDoc(?:.*?dls_id.*?|/)(\d+)|/docs1/(\d+)$)')
 
 def parse_dktrpt(filebits, court, casenum):
@@ -507,13 +512,14 @@ def _parse_opinion_report_table(the_soup, court):
 
         #I've only observed 'Cause and NOS' so far
         #Caseflags and Office are two other often included keys
-        notes_metadict= { "assigned_to" : r"Assigned to: *(.*)$",
-                          "referred_to" : r"Referred to: *(.*)$",
-                          "case_cause" : r"Cause: *(.*)$",
-                          "nature_of_suit" : r"NOS: *(.*)$",
-                          "jury_demand": r"Jury Demand: *(.*)$",
-                          "jurisdiction": r"Jurisdiction: *(.*)$",
-                          "demand": r"^Demand: *(.*)$"
+        notes_metadict = {
+            "assigned_to": r"Assigned to: *(.*)$",
+            "referred_to": r"Referred to: *(.*)$",
+            "case_cause": r"Cause: *(.*)$",
+            "nature_of_suit": r"NOS: *(.*)$",
+            "jury_demand": r"Jury Demand: *(.*)$",
+            "jurisdiction": r"Jurisdiction: *(.*)$",
+            "demand": r"^Demand: *(.*)$"
         }
 
         for index, cell in enumerate(cells):
@@ -547,9 +553,11 @@ def _parse_opinion_report_table(the_soup, court):
                 datestr = cell.string
                 try:
                     month, day, year = datestr.split("/")
-                    document["date_filed"]= datetime.date(int(year),
-                                            int(month),
-                                            int(day)).isoformat()
+                    document["date_filed"]= datetime.date(
+                        int(year),
+                        int(month),
+                        int(day)
+                    ).isoformat()
                 except ValueError: #sometimes there will be a blank date filed space
                     #TK: find a better default value
                     document["date_filed"] = datetime.date.today()
@@ -571,8 +579,11 @@ def _parse_opinion_report_table(the_soup, court):
         required_dockeys = ['doc_num', 'pacer_de_seq_num', 'pacer_dm_id']
 
         for key in required_dockeys:
-            if document.get(key) == None:
-                raise "Could not find required key %s for document: %s" (key, str(document))
+            if document.get(key) is None:
+                raise "Could not find required key %s for document: %s" % (
+                    key,
+                    str(document)
+                )
 
         docket = DocketXML.DocketXML(court, casenum, case_data)
         docket.add_document(document["doc_num"], document["attachment_num"], document)
@@ -711,6 +722,7 @@ def _parse_dktrpt_document_table(the_soup, court):
 
     return [], None
 
+
 def _parse_cadkt_document_table(the_soup, is_full):
     tables = the_soup.findAll('table')
     for table in tables:
@@ -722,13 +734,15 @@ def _parse_cadkt_document_table(the_soup, is_full):
         docmeta_list = []
         for row in table('tr'):
             cells = row("td")
-            if len(cells) != 3: continue
+            if len(cells) != 3:
+                continue
             if not cells[1].findAll(href=ca_doc_re):
                 continue
 
-            docmeta = {}
-            docmeta["attachment_num"] = 0
-            docmeta["pacer_doc_id"] = cells[1]("a")[0]["href"].split('/')[-1]
+            docmeta = {
+                "attachment_num": 0,
+                "pacer_doc_id": cells[1]("a")[0]["href"].split('/')[-1]
+            }
 
             if cells[1]("a")[0].string and cells[1]("a")[0].string.strip().isdigit():
                 docmeta["doc_num"] = cells[1]("a")[0].string.strip()
@@ -748,6 +762,7 @@ def _parse_cadkt_document_table(the_soup, is_full):
         return docmeta_list, table
 
     return [], None
+
 
 def _parse_histdocqry_document_table(the_soup, court):
 

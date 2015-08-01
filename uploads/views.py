@@ -11,7 +11,6 @@ import InternetArchiveCommon as IACommon
 import UploadHandler
 import BucketLockManager
 import DocumentManager
-import ParsePacer
 import datetime
 
 import os
@@ -67,11 +66,10 @@ def upload(request):
         court = court.strip()
 
     if request.POST.get("casenum"):
-        casenum_re = re.compile(r'\d+(-\d+)?')
         casenum = request.POST["casenum"].strip()
+        casenum_re = re.compile(r'\d+(-\d+)?')
         if not casenum_re.match(casenum):
-            message = "upload: 'casenum' invalid: %s" % \
-                request.POST["casenum"]
+            message = "upload: 'casenum' invalid: %s" % request.POST["casenum"]
             logging.error(message)
             return HttpResponse(message)
     else:
