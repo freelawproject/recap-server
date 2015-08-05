@@ -1171,7 +1171,7 @@ def _get_case_metadata_from_ca_dktrpt(the_soup, is_full):
 
     # This is a terrible heuristic, but seriously I couldn't find a better one
     # Gets the first line without bold, like "USA v. Will Smith"
-    for cell in the_soup(text=re.compile("Court of Appeals Docket #: "))[0] \
+    for cell in the_soup(text=re.compile("Court of Appeals Docket"))[0] \
                 .parent.parent.parent.parent.findAll('td'):
         if not cell.findAll('b'):
             case_data["case_name"] = cell.string
