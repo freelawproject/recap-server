@@ -1126,41 +1126,41 @@ def _get_case_metadata_from_ca_dktrpt(the_soup, is_full):
     case_data = {}
 
     try:
-        case_data["nature_of_suit"] = the_soup(text="Nature of Suit: ")[0].next.strip()
+        case_data["nature_of_suit"] = the_soup(text=re.compile("Nature of Suit:"))[0].next.strip()
     except (AttributeError, IndexError):
         pass
     try:
-        case_data["fee_status"] = the_soup(text="Fee Status:")[0].next.strip()
+        case_data["fee_status"] = the_soup(text=re.compile("Fee Status:"))[0].next.strip()
     except (AttributeError, IndexError):
         pass
     try:
-        case_data["date_case_filed"] = the_soup(text="Docketed:")[0].next.strip()
+        case_data["date_case_filed"] = the_soup(text=re.compile("Docketed:"))[0].next.strip()
         case_data["date_case_filed"] = convert_date_format(case_data["date_case_filed"])
     except (AttributeError, IndexError):
         pass
     try:
-        case_data["date_case_terminated"] = the_soup(text="Termed:")[0].next.strip()
+        case_data["date_case_terminated"] = the_soup(text=re.compile("Termed:"))[0].next.strip()
         case_data["date_case_terminated"] = convert_date_format(case_data["date_case_terminated"])
     except (AttributeError, IndexError):
         pass
     try:
-        case_data["docket_num"] = the_soup(text="Court of Appeals Docket #: ")[0].next.strip()
+        case_data["docket_num"] = the_soup(text=re.compile("Court of Appeals Docket #: "))[0].next.strip()
     except (AttributeError, IndexError):
         pass
     try:
-        case_data["appeal_from"] = the_soup(text="Appeal From:")[0].next.strip()
+        case_data["appeal_from"] = the_soup(text=re.compile("Appeal From:"))[0].next.strip()
     except (AttributeError, IndexError):
         pass
     try:
-        case_data["originating_judge"] = the_soup(text="Originating Judge: ")[0].next.strip()
+        case_data["originating_judge"] = the_soup(text=re.compile("Originating Judge: "))[0].next.strip()
     except (AttributeError, IndexError):
         pass
     try:
-        case_data["originating_judge"] = the_soup(text="Trial Judge: ")[0].next.strip()
+        case_data["originating_judge"] = the_soup(text=re.compile("Trial Judge: "))[0].next.strip()
     except (AttributeError, IndexError):
         pass
     try:
-        case_data["court_reporter"] = the_soup(text="Court Reporter: ")[0].next.strip()
+        case_data["court_reporter"] = the_soup(text=re.compile("Court Reporter: "))[0].next.strip()
     except (AttributeError, IndexError):
         pass
     try:
@@ -1171,7 +1171,7 @@ def _get_case_metadata_from_ca_dktrpt(the_soup, is_full):
 
     # This is a terrible heuristic, but seriously I couldn't find a better one
     # Gets the first line without bold, like "USA v. Will Smith"
-    for cell in the_soup(text="Court of Appeals Docket #: ")[0] \
+    for cell in the_soup(text=re.compile("Court of Appeals Docket #: "))[0] \
                 .parent.parent.parent.parent.findAll('td'):
         if not cell.findAll('b'):
             case_data["case_name"] = cell.string
@@ -1187,7 +1187,7 @@ def _get_case_metadata_from_ca_dktrpt(the_soup, is_full):
 
     case_type_info = []
     try:
-        for cell in the_soup(text="Case Type Information:")[0] \
+        for cell in the_soup(text=re.compile("Case Type Information:"))[0] \
             .parent.parent.parent.parent.findAll('td'):
             if cell.find('b'): cell.find('b').extract()
             if (cell.renderContents() and cell.renderContents().strip() and
@@ -1199,7 +1199,7 @@ def _get_case_metadata_from_ca_dktrpt(the_soup, is_full):
         case_data['case_type_info'] = ','.join(case_type_info)
 
     try:
-        labels, dates = the_soup(text="Originating Court Information:")[0] \
+        labels, dates = the_soup(text=re.compile("Originating Court Information:"))[0] \
             .parent.parent.parent.parent.findAll('tr')[-2:]
         for label, date in zip(labels.findAll('td'), dates.findAll('td')):
             label = label.find('b').string.strip()
