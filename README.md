@@ -7,7 +7,9 @@ you're trying to learn how the browser extension (client) interacts
 with the server.
 
 Website: http://www.recapthelaw.org
-Contact: info@recapthelaw.org
+Contact: info@recapthelaw.org or join our Slack
+
+[![Slack Status](https://join-flp-talk.herokuapp.com/badge.svg)](https://join-flp-talk.herokuapp.com/)
 
 # Tests
 
