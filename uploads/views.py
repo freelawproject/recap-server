@@ -68,7 +68,7 @@ def upload(request):
     if request.POST.get("casenum"):
         casenum = request.POST["casenum"].strip()
         casenum_re = re.compile(r'\d+(-\d+)?')
-        if not casenum_re.match(casenum):
+        if not casenum_re.match(casenum) or ":" in casenum:
             message = "upload: 'casenum' invalid: %s" % request.POST["casenum"]
             logging.error(message)
             return HttpResponse(message)
@@ -384,7 +384,6 @@ def lock(request):
 
 
 def unlock(request):
-
     try:
         key = request.GET["key"].strip()
         court = request.GET["court"].strip()
@@ -408,10 +407,9 @@ def unlock(request):
     else:
         uploaderid = uploader.id
 
-
     dropped, errmsg = BucketLockManager.drop_lock(court, casenum, uploaderid,
                                                   modified=modified,
-                                                  ignore_nonce = ignore_nonce)
+                                                  ignore_nonce=ignore_nonce)
 
     if dropped:
         return HttpResponse("1")
