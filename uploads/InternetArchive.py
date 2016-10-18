@@ -501,10 +501,10 @@ def _cron_put_pickles():
             lock_nonce, errmsg = BucketLockManager.get_lock(court, casenum,
                                                             RECAP_UPLOADER_ID,
                                                             one_per_uploader=1)
-
             if not lock_nonce:
                 print "  Passing on %s.%s: %s" % (court, casenum, errmsg)
 
+            if not lock_nonce or lock_nonce == 'bigdoc':
                 # We don't have a lock, so don't drop the lock in the next loop
                 curr_court = None
                 curr_casenum = None

@@ -29,7 +29,7 @@ def get_lock(court, casenum, uploaderid, one_per_uploader=0):
 
             # This prevents two cron jobs from requesting the same lock
             if lock.uploaderid == uploaderid and one_per_uploader:
-                return None, "You already own this lock (Another cron job?)"
+                return lock.nonce, "You already own this lock (Another cron job?)"
             if lock.uploaderid == uploaderid and not lock.ready:
                 return lock.nonce, ""
             if lock.uploaderid == uploaderid and lock.ready and not lock.processing:
@@ -104,13 +104,8 @@ def query_locks(uploaderid):
 
 def mark_ready_for_processing(timeout_cutoff):
     # Get all ready locks that aren't expired.
-    lockquery = BucketLock.objects.filter(
-        ready=1,
-        processing=0,
-        locktime__gte=timeout_cutoff,
-    ).exclude(
-        nonce='bigdoc',
-    )
+    lockquery = BucketLock.objects.filter(ready=1, processing=0,
+                                          locktime__gte=timeout_cutoff)
 
     locklist = []
     # Set all ready locks to processing state
