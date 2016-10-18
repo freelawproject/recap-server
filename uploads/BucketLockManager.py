@@ -104,8 +104,13 @@ def query_locks(uploaderid):
 
 def mark_ready_for_processing(timeout_cutoff):
     # Get all ready locks that aren't expired.
-    lockquery = BucketLock.objects.filter(ready=1, processing=0,
-                                          locktime__gte=timeout_cutoff)
+    lockquery = BucketLock.objects.filter(
+        ready=1,
+        processing=0,
+        locktime__gte=timeout_cutoff,
+    ).exclude(
+        nonce='bigdoc',
+    )
 
     locklist = []
     # Set all ready locks to processing state
