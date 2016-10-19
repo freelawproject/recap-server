@@ -377,10 +377,10 @@ def lock(request):
     lock_nonce, errmsg = BucketLockManager.get_lock(court, casenum,
                                                     uploaderid, one_per_uploader)
 
-    if lock_nonce:
-        return HttpResponse("1<br>%s" % lock_nonce)
-    else:
+    if not lock_nonce or lock_nonce == 'bigdoc':
         return HttpResponse("0<br>%s" % errmsg)
+    else:
+        return HttpResponse("1<br>%s" % lock_nonce)
 
 
 def unlock(request):

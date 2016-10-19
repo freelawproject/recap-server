@@ -289,8 +289,7 @@ class DocketXML(object):
                             att_e = SubElement(attorneys_e, "attorney")
                             for att_meta_key in att_meta_keys:
                                 try:
-                                    SubElement(att_e,
-                                               att_meta_key).text = unicode(
+                                    SubElement(att_e, att_meta_key).text = unicode(
                                         attdict[att_meta_key])
                                 except KeyError:
                                     pass
