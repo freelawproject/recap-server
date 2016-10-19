@@ -430,7 +430,8 @@ def do_parse_xml(root):
                             partymeta["attorneys"].append(attmeta)
 
                 else:
-                    partymeta[node.tag] = node.text.strip()
+                    if node.text is not None:
+                        partymeta[node.tag] = node.text.strip()
 
             docket.add_party(partymeta)
 
