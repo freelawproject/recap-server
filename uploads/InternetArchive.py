@@ -770,6 +770,7 @@ def _run_cron():
     _cron_get_updates()
     # Put all pickled requests to IA.
     _cron_put_pickles()
+    print "FINISHED RUNNING CRON. EXITING."
 
 
 def enter_pdb(sig, frame):
