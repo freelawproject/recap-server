@@ -453,7 +453,7 @@ def get_updated_cases(request):
 
     response = HttpResponse(mimetype='text/csv')
     tpq = float(tpq)
-    tpq = datetime.datetime.fromtimestamp(tpq, tz=pytz.utc)
+    tpq = datetime.datetime.fromtimestamp(tpq)
     docs = Document.objects.filter(lastdate__gt=tpq) | \
            Document.objects.filter(modified__gt=tpq)
     columns = ['court', 'casenum', 'docnum', 'subdocnum', 'available']
