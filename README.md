@@ -1,6 +1,6 @@
 # Overview
 
-The RECAP Server.
+This is the code for the original, faithful RECAP Server, as in use from 2009 to 2017. The code below is no longer in use.
 
 This is the server side of the RECAP platform. See uploads/views.py if
 you're trying to learn how the browser extension (client) interacts
